@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="pullrefresh_fresh_height">60dp</dimen> <!-- 下拉多长距离放开可刷新-->
+    <dimen name="pullrefresh_head_content_height">50dp</dimen><!-- 刷新中viewHead显示的高度-->
+
+    <dimen name="text_size_ten">10sp</dimen>
+    <dimen name="text_size_ev">11sp</dimen>
+    <dimen name="text_size_micro">12sp</dimen>
+    <dimen name="text_size_micro_plus">13sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_ms">15sp</dimen>
+    <dimen name="text_size_ml">16sp</dimen>
+    <dimen name="text_size_ml_plus">17sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_bl">20sp</dimen>
+    <dimen name="text_23">23sp</dimen>
+    <dimen name="text_size_b_bl">32sp</dimen>
+
+    <dimen name="radius">6dip</dimen>
+    <dimen name="radius_half">3dip</dimen>
+
+    <dimen name="iv_round_radius">2dp</dimen>
+
+    <dimen name="item_margin">@dimen/base_padding</dimen>
+
+    <dimen name="home_margin">-15dp</dimen>
+
+    <!-- 边距 -->
+    <dimen name="dash_gap">3dip</dimen>
+    <dimen name="dash_width">1dip</dimen>
+    <dimen name="base_padding">2dip</dimen>
+    <dimen name="border_space">8dip</dimen>
+    <dimen name="border_space_half">4dip</dimen>
+    <dimen name="border_space_five">5dip</dimen>
+    <dimen name="border_space_normal">6dip</dimen>
+    <dimen name="border_space_sev">7dip</dimen>
+    <dimen name="border_space_sec">10dip</dimen>
+    <dimen name="border_space_sec_m">12dip</dimen>
+    <dimen name="dp_13">13dip</dimen>
+    <dimen name="border_space_sec_max">15dip</dimen>
+    <dimen name="border_space_sec_max_">17dip</dimen>
+    <dimen name="border_space_sec_max_m_">18dip</dimen>
+    <dimen name="border_space_sec_max_m">20dip</dimen>
+    <dimen name="border_space_sec_max_mx">22dip</dimen>
+    <dimen name="border_space_sec_max_b">25dip</dimen>
+    <dimen name="border_space_sec_max_b_m">28dip</dimen>
+    <dimen name="border_space_thr">30dip</dimen>
+    <dimen name="border_space_44">44dip</dimen>
+    <dimen name="border_space_thr_mid">35dip</dimen>
+    <dimen name="border_space_thr_max">40dip</dimen>
+    <dimen name="border_space_max_min">45dip</dimen>
+    <dimen name="border_space_max_max">50dip</dimen>
+
+    <dimen name="border_space_six_max">60dip</dimen>
+    <dimen name="dp_65">65dp</dimen>
+    <dimen name="border_space_txt_width">70dp</dimen>
+    <dimen name="border_space_txt_width_">75dp</dimen>
+    <dimen name="border_space_eighty">80dp</dimen>
+    <dimen name="border_space_one_hundred">100dp</dimen>
+
+    <dimen name="drawer_item_width">210dp</dimen>
+
+    <dimen name="pull_padding_left">8dip</dimen>
+    <dimen name="pull_padding_top">0dip</dimen>
+    <dimen name="pull_padding_right">8dip</dimen>
+    <dimen name="pull_padding_bottom">0dip</dimen>
+
+    <dimen name="order_btn_height">41dp</dimen>
+
+    <dimen name="main_top_draw_width">44dp</dimen>
+    <dimen name="main_top_draw_height">22dp</dimen>
+
+</resources>

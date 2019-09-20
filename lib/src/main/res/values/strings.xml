@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">lib</string>
+    <string name="str_loading_wait">请稍候…</string>
+    <string name="str_call_phone_no_permisson">拨打电话权限未授予</string>
+
+    <string name="str_loading">正在加载中&#8230;</string>
+    <string name="str_retry_load">重新加载</string>
+
+    <string name="str_notice_empty_hint">暂无相关信息</string>
+    <string name="str_notice_empty_click_hint">点击刷新屏幕</string>
+    <string name="str_pull_refresh_empty_hint">下拉刷新屏幕</string>
+    <string name="str_click_empty_hint">点击空白处刷新</string>
+</resources>

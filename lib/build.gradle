@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+//apply plugin: 'com.jakewharton.butterknife'
+
+android {
+    compileSdkVersion rootProject.setup.compileSdk
+
+    defaultConfig {
+        minSdkVersion rootProject.setup.minSdk
+
+        targetSdkVersion rootProject.setup.targetSdk
+        versionCode rootProject.setup.vcode
+        versionName rootProject.setup.vname
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile "com.android.support:appcompat-v7:$rootProject.versions.libSupport"
+    compile "com.android.support:cardview-v7:$rootProject.versions.libSupport"
+    compile "com.android.support:recyclerview-v7:$rootProject.versions.libSupport"
+    compile "com.android.support:design:$rootProject.versions.libSupport"
+    testCompile 'junit:junit:4.12'
+    //    RxJava
+    compile "io.reactivex.rxjava2:rxjava:$rootProject.versions.libRxJava"
+    //    RxAndroid
+    compile "io.reactivex.rxjava2:rxandroid:$rootProject.versions.libRxAndroid"
+    //    Retrofit
+    compile "com.squareup.retrofit2:retrofit:$rootProject.versions.libRetrofit"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$rootProject.versions.libRetrofit"
+    compile "com.squareup.retrofit2:converter-gson:$rootProject.versions.libRetrofit"
+    //    butterknife
+    compile "com.jakewharton:butterknife:$rootProject.versions.libRutterknife"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.versions.libRutterknife"
+    //    log
+    compile 'com.facebook.stetho:stetho:1.5.0'
+    compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    //    glide
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+}
