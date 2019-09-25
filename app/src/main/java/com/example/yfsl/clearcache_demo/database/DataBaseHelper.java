@@ -14,7 +14,7 @@ import com.example.yfsl.clearcache_demo.SQLTable;
  */
 
 public class DataBaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "demo_db";
+    public static final String DATABASE_NAME = "demo.db";
     //数据库版本创建是设置为1
     private static final int DB_VERSION = 1;
 

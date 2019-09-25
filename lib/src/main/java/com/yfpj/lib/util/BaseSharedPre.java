@@ -9,7 +9,7 @@ import android.util.Base64;
  */
 
 public abstract class BaseSharedPre {
-    private static String PREFS_NAME = "sharedpref_airport";
+    private static String PREFS_NAME = "sharedpref";
     protected static final String PREFS_STR_INVALID = "";
 
     public static boolean isInvalidPrefString(String value) {

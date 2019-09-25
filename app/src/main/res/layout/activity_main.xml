@@ -42,15 +42,21 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_save_to_inner_data"
-                    android:text="INNER"/>
+                    android:text="innercache"/>
 
                 <Button
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_save_to_external_data"
-                    android:text="SD CARD"/>
+                    android:text="externalcache"/>
             </LinearLayout>
+            
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" 
+                android:id="@+id/btn_save_to_sd_card"
+                android:text="sd card"/>
 
             <Button
                 android:layout_width="wrap_content"

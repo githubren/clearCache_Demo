@@ -3,6 +3,7 @@ package com.example.yfsl.clearcache_demo.utils;
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -58,6 +59,8 @@ public class DataCleanUtil {
     public static void cleanExternalCache(Context context) {
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
+//            File externalCacheFile = new File(context.getExternalCacheDir(),"CLEAR_CACHE_DEMO");
+//            deleteFilesByDirectory(externalCacheFile);
             deleteFilesByDirectory(context.getExternalCacheDir());
         }
     }

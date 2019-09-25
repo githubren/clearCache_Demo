@@ -1,5 +1,6 @@
 package com.example.yfsl.clearcache_demo;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +19,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.yfsl.clearcache_demo.database.DataBaseHelper;
 import com.example.yfsl.clearcache_demo.database.DataBaseManager;
 import com.example.yfsl.clearcache_demo.utils.DataCleanUtil;
+import com.example.yfsl.clearcache_demo.utils.GlideCacheUtil;
 import com.example.yfsl.clearcache_demo.utils.SharedPreferenceUtil;
+import com.yfpj.lib.util.RxBus;
 import com.yfpj.lib.util.compress.BitmapUtil;
 import com.yfpj.lib.util.compress.CompressFileUtil;
 
@@ -31,13 +35,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import io.reactivex.Observable;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button mSaveShareBtn,mSaveInnerBtn,mSaveExternalBtn,mSaveDatabaseBtn,mSaveContentBtn,mSaveNetBtn;
+    private Button mSaveShareBtn,mSaveInnerBtn,mSaveExternalBtn,mSaveSDCardBtn,mSaveDatabaseBtn,mSaveContentBtn,mSaveNetBtn;
     private Button mClearShareBtn,mClearInnerBtn,mClearExternalBtn,mClearDatabaseBtn;
     private TextView mShowSharedPreSize,mShowInnerSize,mShowExternalSize,mShowDataBaseSize;
     private Button mClearAllBtn;
     private TextView mShowCacheSize;
 
+    private Observable<Integer> rxBus;
+
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +54,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
         initData();
+        rxBus = RxBus.get().register("REFRESH",Integer.class);
+        rxBus.subscribe(integer -> showCacheSizeData());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (rxBus != null)
+            RxBus.get().unregister("REFRESH",rxBus);
     }
 
     private void initData(){
@@ -52,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSaveShareBtn.setOnClickListener(this);
         mSaveInnerBtn.setOnClickListener(this);
         mSaveExternalBtn.setOnClickListener(this);
+        mSaveSDCardBtn.setOnClickListener(this);
         mSaveDatabaseBtn.setOnClickListener(this);
         mSaveContentBtn.setOnClickListener(this);
         mSaveNetBtn.setOnClickListener(this);
@@ -63,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mClearAllBtn.setOnClickListener(this);
 
+        showCacheSizeData();
+    }
+
+
+    private void showCacheSizeData() {
         String sharedPrefSize = DataCleanUtil.getFormatSize(getSharedPrefCacheSize());
         String innerSize = DataCleanUtil.getFormatSize(getInnerCacheSize());
         String externalSize = DataCleanUtil.getFormatSize(getExternalCacheSize());
@@ -75,12 +99,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mShowCacheSize.setText(totalSize);
     }
 
-
-
     private void initView() {
         mSaveShareBtn = findViewById(R.id.btn_save_to_sharepreference);
         mSaveInnerBtn = findViewById(R.id.btn_save_to_inner_data);
         mSaveExternalBtn = findViewById(R.id.btn_save_to_external_data);
+        mSaveSDCardBtn = findViewById(R.id.btn_save_to_sd_card);
         mSaveDatabaseBtn = findViewById(R.id.btn_save_to_database);
         mSaveContentBtn = findViewById(R.id.btn_save_to_contentprovider);
         mSaveNetBtn = findViewById(R.id.btn_save_to_net);
@@ -119,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 获取内存缓存大小
      */
     private long getInnerCacheSize(){
-        long innerCacheSize = DataCleanUtil.getFolderSize(this.getCacheDir());//内存缓存
+        long innerCacheSize = DataCleanUtil.getFolderSize(this.getCacheDir());//内部缓存
         return innerCacheSize;
     }
 
@@ -127,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 获取外存缓存大小
      */
     private long getExternalCacheSize(){
-        long externalCacheSize = DataCleanUtil.getFolderSize(this.getExternalCacheDir());//外存缓存
+        long externalCacheSize = DataCleanUtil.getFolderSize(this.getExternalCacheDir());//外部缓存
         return externalCacheSize;
     }
 
@@ -165,11 +188,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String[] data = {"张三","23","false"};
                 saveToSharedPreference(data);
                 break;
-            case R.id.btn_save_to_inner_data://保存到内存中
+            case R.id.btn_save_to_inner_data://保存到内部缓存存中
                 String dataInner = "张三  23  false";
                 saveToInnerStorge(dataInner);
+                savePicToInnerCache();
                 break;
-            case R.id.btn_save_to_external_data://保存到SD卡中
+            case R.id.btn_save_to_external_data://保存到外部缓存中
+                savePicToExternalCache();
+                break;
+            case R.id.btn_save_to_sd_card://保存到SD卡中
                 savePicToSdcard();
                 break;
             case R.id.btn_save_to_database://保存到数据库
@@ -183,15 +210,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 DataCleanUtil.cleanSharedPreference(this);
                 break;
             case R.id.btn_clear_inner_data://清除内存
+                DataCleanUtil.cleanFiles(this);
                 DataCleanUtil.cleanInternalCache(this);
                 break;
             case R.id.btn_clear_external_data://清除外存
                 DataCleanUtil.cleanExternalCache(this);
                 break;
             case R.id.btn_clear_database://清除数据库
-                DataCleanUtil.cleanDatabaseByName(this,SQLTable.TABLE_NAME);
+//                DataCleanUtil.cleanDatabaseByName(this,DataBaseHelper.DATABASE_NAME);
+//                DataCleanUtil.cleanDatabases(this);
+                DataBaseManager.getInstance(this).deleteData("张三",23,"否");
                 break;
         }
+        RxBus.get().post("REFRESH",1);
     }
 
     private void saveToDataBase() {
@@ -200,6 +231,86 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         values.put(SQLTable.OLD,23);
         values.put(SQLTable.MARRIED,"否");
         DataBaseManager.getInstance(this).saveData(values);
+    }
+
+    /**
+     * 保存照片到内部缓存
+     */
+    private void savePicToInnerCache() {
+        Bitmap bitmap = getBitmap(this,R.drawable.ic_launcher_foreground);
+//        //创建存放图片的文件目录
+//        File appDir = new File(this.getCacheDir(),"CLEAR_CAHCE_DEMO");
+//        if (!appDir.exists()) {
+//            appDir.mkdirs();
+//        }
+        String filename =  "demoimg.jpg";
+        //创建存放图片的文件（文件名后缀文件格式）
+        File file = new File(this.getCacheDir(), filename);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            //创建文件输出流
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        try {
+//            //将图片插入到系统图库（file.getAbsolutePath()这个路径）
+//            MediaStore.Images.Media.insertImage(this.getContentResolver(), file.getAbsolutePath(), filename, null);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        //发动广播  通知图库更新显示图片（更新的位置由第二个参数决定 Uri.parse("file://"+Environment.getExternalStorageDirectory())）
+//        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+    }
+
+
+    /**
+     * 保存照片到外部缓存
+     */
+    private void savePicToExternalCache() {
+        Bitmap bitmap = getBitmap(this,R.drawable.ic_launcher_foreground);
+//        //创建存放图片的文件目录
+//        File appDir = new File(this.getExternalCacheDir(), "CLEAR_CACHE_DEMO");
+//        if (!appDir.exists()) {
+//            appDir.mkdirs();
+//        }
+        String filename =  "demoimg.jpg";
+        //创建存放图片的文件（文件名后缀文件格式）
+//        File file = new File(appDir, filename);
+        File file = new File(this.getExternalCacheDir(), filename);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            //创建文件输出流
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        try {
+//            //将图片插入到系统图库（file.getAbsolutePath()这个路径）
+//            MediaStore.Images.Media.insertImage(this.getContentResolver(), file.getAbsolutePath(), filename, null);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        //发动广播  通知图库更新显示图片（更新的位置由第二个参数决定 Uri.parse("file://"+Environment.getExternalStorageDirectory())）
+//        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
     }
 
     /**

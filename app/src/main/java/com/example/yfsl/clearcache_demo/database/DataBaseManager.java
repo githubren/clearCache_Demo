@@ -3,6 +3,7 @@ package com.example.yfsl.clearcache_demo.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.yfsl.clearcache_demo.SQLTable;
 
@@ -43,6 +44,14 @@ public class DataBaseManager {
         if (update<=0){//数据库中没有这样的数据时
             writeDatabase.insert(SQLTable.TABLE_NAME,null,values);
         }
+    }
+
+    /**
+     * 删除数据
+     */
+    public void deleteData(String name,int old,String married){
+        writeDatabase.delete(SQLTable.TABLE_NAME,SQLTable.NAME + "=? and "+SQLTable.OLD + "=? and "+SQLTable.MARRIED + "=?",
+                new String[]{name, String.valueOf(old),married});
     }
 
 }
